@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include(`../partials/head.ejs`) %>
+<body>
+  
+  <%- include(`../partials/nav.ejs`) %>
+
+  <div class="details content">
+    <h2><%= blog.title %></h2>
+    <div class="content">
+      <p><%= blog.body %></p>
+    </div>
+    <a class="delete" data-doc="<%= blog._id %>">
+    <!-- data-doc...  data is a special attribute that acts as a custom attribute for us to use by adding a suffix (in this case -doc) and assigning it a value-->
+      <img src="/trashcan.svg" alt="delete icon">  
+    </a>
+  </div>
+
+  <%- include(`../partials/footer.ejs`) %>
+  <script>
+    // logic for DELETE
+    const trashcan = document.querySelector(`a.delete`);
+
+    trashcan.addEventListener(`click`, (e) => {
+      const endpoint = `/blogs/${trashcan.dataset.doc}`;
+      // .dataset.doc references the value assigned to our data-doc custom attribute in our <a> tag above
+      fetch(endpoint, {
+        method: `DELETE`
+      })
+      .then((response) => response.json())
+      .then((data) => window.location.href = data.redirect)
+      // ^^^redirect back to homepage after DELETE
+      .catch(err => console.log(err));
+    })
+    // this is an AJAX request, so in node a redirect cannot be used. JSON data with a redirect property (the redirect url) is sent back instead
+  </script>
+</body>
+</html>
